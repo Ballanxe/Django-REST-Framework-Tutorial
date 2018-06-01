@@ -1,0 +1,67 @@
+
+serializer = SnippetSerializer(Snippet.objects.all(), many=True)
+
+JSONRenderer().render(serializer.data)
+
+snippet = Snippet(code='foo = "bar"\n')
+snippet.save()
+
+snippet = Snippet(code='print "hello, world"\n')
+snippet.save()
+
+serializer = SnippetSerializer(snippet)
+serializer.data
+
+content = JSONRenderer().render(serializer.data)
+content
+
+from django.utils.six import BytesIO
+
+stream = BytesIO(content)
+data = JSONParser().parse(stream)
+
+serializer = SnippetSerializer(data=data)
+serializer.is_valid()
+
+serializer.validated_data
+
+serializer.save()
+
+
+CREATED MODEL SERIALIZER INSTEAD 
+
+from snippets.serializers import SnippetSerializer
+serializer = SnippetSerializer()
+print(repr(serializer))
+
+
+$ pip install httpie
+
+http http://127.0.0.1:8000/snippets/
+
+
+CONFIGURATING FORMATS 
+
+def snippet_detail(request, pk, format=None):
+
+urlpatterns = format_suffix_patterns(urlpatterns)
+
+from rest_framework.urlpatterns import format_suffix_patterns
+
+http http://127.0.0.1:8000/snippets/ Accept:application/json  
+
+http http://127.0.0.1:8000/snippets/ Accept:text/html 
+
+http http://127.0.0.1:8000/snippets.json  # JSON suffix
+http http://127.0.0.1:8000/snippets.api   # Browsable API suffix
+
+http --form POST http://127.0.0.1:8000/snippets/ code="print 123" ---> ADDING THE HTTP HEADER 
+
+http --json POST http://127.0.0.1:8000/snippets/ code="print 456"
+
+
+PROVIDING AUTHENTICATION CREDENTIALS IN THE REQUEST 
+
+http -a admin:Seneca88+ POST http://127.0.0.1:8000/snippets/ code="print 789"
+
+
